@@ -12,10 +12,12 @@ app.use(cors())
 app.use(express.json())
 
 // Todos los posts
-app.get('/devq/posts', (req, res) => {
-    Post.find({}).then(posts => {
-        res.json(posts)
-    })
+app.get('/devq/posts', (req, res, next) => {
+    Post.find({})
+        .then(posts => {
+            res.json(posts)
+        })
+        .catch(err => next(err))
 })
 
 // Todos los posts por id
@@ -36,15 +38,17 @@ app.get('/devq/post/:id', (req, res, next) => {
 // Borrar un post por id
 app.delete('/devq/post/:id', (req, res, next) => {
     const { id } = req.params
-    Post.findByIdAndDelete(id).then(() => {
-        res.status(204).end()
-    }).catch(err => {
-        next(err)
-    })
+
+    Post.findByIdAndDelete(id)
+        .then(() => {
+            res.status(204).end()
+        }).catch(err =>
+            next(err)
+        )
 })
 
 // Crear un post
-app.post('/devq/post', (req, res) => {
+app.post('/devq/post', (req, res, next) => {
     const post = req.body
 
     if (!post || !post.company) {
@@ -64,9 +68,11 @@ app.post('/devq/post', (req, res) => {
         create_date: new Date()
     })
 
-    newPost.save().then(saveedPost => {
-        res.json(saveedPost)
-    })
+    newPost.save()
+        .then(saveedPost => {
+            res.json(saveedPost)
+        })
+        .catch(err => next(err))
 })
 
 // Modificar un post
@@ -83,6 +89,7 @@ app.put('/devq/post/:id', (req, res, next) => {
         .then(result => {
             res.json(result)
         })
+        .catch(err => next(err))
 })
 
 // Middleware para páginas no encontradas

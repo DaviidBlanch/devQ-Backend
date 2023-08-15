@@ -7,7 +7,7 @@ const postSchema = new Schema({
     country: String,
     city: String,
     experience: String,
-    questions: Array, // Es un array de strings
+    questions: [String], // Es un array de strings
     create_date: Date
 })
 
