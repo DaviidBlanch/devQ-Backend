@@ -1,47 +1,49 @@
+require('dotenv').config()
+require('./mongo')
+
 const express = require('express')
 const cors = require('cors')
 const app = express()
+const Post = require('./models/Post')
+const notFound = require('./middleware/notFound')
+const handleError = require('./middleware/handleError')
 
 app.use(cors())
 app.use(express.json())
 
-app.use()
-
-let posts = [
-    {
-        id: 1,
-        company: 'Capgemini',
-        description: ' Impulsa la excelencia tecnológica a nivel … ',
-        image: 'Archivo.jpeg',
-        country: 'España',
-        city: 'Valencia',
-        range: 'Junior',
-        questions: '¿Expectativas salariales ?',
-        create_date: '13 /08 / 2023'
-    }
-]
-
+// Todos los posts
 app.get('/devq/posts', (req, res) => {
-    res.json(posts)
+    Post.find({}).then(posts => {
+        res.json(posts)
+    })
 })
 
-app.get('/devq/post/:id', (req, res) => {
-    const id = Number(req.params.id)
-    const post = posts.find(post => post.id === id)
+// Todos los posts por id
+app.get('/devq/post/:id', (req, res, next) => {
+    const { id } = req.params
 
-    if (post) {
-        res.json(post)
-    } else {
-        res.status(404).end()
-    }
+    Post.findById(id).then(post => {
+        if (post) {
+            return res.json(post)
+        } else {
+            res.status(404).end()
+        }
+    }).catch(err => {
+        next(err)
+    })
 })
 
-app.delete('/devq/post/:id', (req, res) => {
-    const id = Number(req.params.id)
-    posts = posts.filter(post => post.id !== id)
-    res.status(204).end()
+// Borrar un post por id
+app.delete('/devq/post/:id', (req, res, next) => {
+    const { id } = req.params
+    Post.findByIdAndDelete(id).then(() => {
+        res.status(204).end()
+    }).catch(err => {
+        next(err)
+    })
 })
 
+// Crear un post
 app.post('/devq/post', (req, res) => {
     const post = req.body
 
@@ -51,31 +53,47 @@ app.post('/devq/post', (req, res) => {
         })
     }
 
-    const newPost = {
-        id: posts.length + 1,
+    const newPost = new Post({
         company: post.company,
         description: post.description,
         image: post.image,
         country: post.country,
         city: post.city,
-        range: post.range,
+        experience: post.experience,
         questions: post.questions,
-        create_date: new Date().toISOString
-    }
+        create_date: new Date()
+    })
 
-    posts = [...posts, newPost]
-
-    res.status(201).json(post)
-})
-
-app.use((req, res) => {
-    res.status(404).json({
-        error: 'Not found'
+    newPost.save().then(saveedPost => {
+        res.json(saveedPost)
     })
 })
 
-const PORT = process.env.PORT
+// Modificar un post
+app.put('/devq/post/:id', (req, res, next) => {
+    const { id } = req.params
+    const post = req.body
 
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`)
+    const newPostInfo = {
+        description: post.description,
+        questions: post.questions
+    }
+
+    Post.findByIdAndUpdate(id, newPostInfo, { new: true })
+        .then(result => {
+            res.json(result)
+        })
 })
+
+// Middleware para páginas no encontradas
+app.use(notFound)
+// Middlware para errores
+app.use(handleError)
+
+// Port and server
+const PORT = process.env.PORT
+const server = app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+})
+
+module.exports = { app, server }
