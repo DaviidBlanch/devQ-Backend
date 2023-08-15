@@ -1,3 +1,3 @@
 # devQ-Backend
 devQ Backend
-install nodemon,express
+install nodemon, express, standard, cors
