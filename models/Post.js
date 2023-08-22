@@ -8,7 +8,11 @@ const postSchema = new Schema({
     city: String,
     experience: String,
     questions: [String], // Es un array de strings
-    create_date: Date
+    create_date: Date,
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }
 })
 
 postSchema.set('toJSON', {
