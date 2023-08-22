@@ -1,4 +1,5 @@
 # devQ-Backend
+Done by David Blanch
 
 ## About The Project
 Web application to view interview questions filtered by company.
@@ -32,13 +33,16 @@ Install dotenv
 ```
 $ npm install dotenv
 ```
+
 Run in dev mode:
 ```
 $ npm run dev
 ```
+
 ### Built With
 - [Node.js](https://nodejs.org/es/docs/)
 - [Express](https://expressjs.com/)
 - [MongoDB](https://www.mongodb.com/)
+
 ## Contact :mailbox_with_no_mail:
 David Blanch Bellido dablabe98@gmail.com
