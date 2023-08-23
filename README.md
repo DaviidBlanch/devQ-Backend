@@ -9,6 +9,10 @@ Install node.js:
 ```
 $ npm install node.js
 ```
+Install mongo db:
+```
+$ npm install mongodb.js
+```
 Install nodemon
 ```
 $ npm install nodemon
@@ -32,6 +36,10 @@ $ npm install mongoose
 Install dotenv
 ```
 $ npm install dotenv
+```
+Install bcrypt
+```
+$ npm install bcrypt
 ```
 
 Run in dev mode:
