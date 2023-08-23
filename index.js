@@ -7,6 +7,7 @@ const app = express()
 const Post = require('./models/Post')
 const notFound = require('./middleware/notFound')
 const handleError = require('./middleware/handleError')
+const usersRouter = require('./controllers/users')
 
 app.use(cors())
 app.use(express.json())
@@ -92,13 +93,16 @@ app.put('/devq/post/:id', (req, res, next) => {
         .catch(err => next(err))
 })
 
+// Crear usuarios
+app.use('/devQ/users', usersRouter)
+
 // Middleware para páginas no encontradas
 app.use(notFound)
 // Middlware para errores
 app.use(handleError)
 
 // Port and server
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 3001
 const server = app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
