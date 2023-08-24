@@ -12,11 +12,6 @@ const usersRouter = require('./controllers/users')
 app.use(cors())
 app.use(express.json())
 
-// Mostrar en index hola
-app.get('/', (req, res) => {
-    res.send('<h1>Hello World!</h1>')
-})
-
 // Todos los posts
 app.get('/devq/posts', (req, res, next) => {
     Post.find({})
