@@ -102,7 +102,7 @@ app.put('/devq/post/:id', (req, res, next) => {
         .catch(err => next(err))
 })
 
-// Muestra todos los usuario
+// Muestra todos los usuarios
 app.use('devq/users', usersRouter)
 
 // Crear usuarios
