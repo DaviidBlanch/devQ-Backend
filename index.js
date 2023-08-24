@@ -5,10 +5,10 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 const Post = require('./models/Post')
+const User = require('./models/User')
 const notFound = require('./middleware/notFound')
 const handleError = require('./middleware/handleError')
 const usersRouter = require('./controllers/users')
-const { User } = require('@auth0/auth0-react')
 
 app.use(cors())
 app.use(express.json())
@@ -55,9 +55,9 @@ app.post('/devq/post', async (req, res, next) => {
 
     const user = await User.findById(userId)
 
-    if (!company || !description || !image || !country || !city || !experience || !questions) {
+    if (!company) {
         return res.status(400).json({
-            error: 'fields are missing'
+            error: 'company is missing'
         })
     }
 
