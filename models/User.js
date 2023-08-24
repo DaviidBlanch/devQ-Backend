@@ -5,6 +5,7 @@ const userSchema = new Schema({
     username: String,
     passwordHash: String,
     image: String,
+    created_at: Date,
     posts: [{
         type: Schema.Types.ObjectId,
         ref: 'Post'

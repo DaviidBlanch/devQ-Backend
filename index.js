@@ -8,17 +8,18 @@ const Post = require('./models/Post')
 const notFound = require('./middleware/notFound')
 const handleError = require('./middleware/handleError')
 const usersRouter = require('./controllers/users')
+const { User } = require('@auth0/auth0-react')
 
 app.use(cors())
 app.use(express.json())
 
 // Todos los posts
-app.get('/devq/posts', (req, res, next) => {
-    Post.find({})
-        .then(posts => {
-            res.json(posts)
-        })
-        .catch(err => next(err))
+app.get('/devq/posts', async (req, res, next) => {
+    const posts = await Post.find({}).populate('user', {
+        username: 1,
+        name: 1
+    })
+    res.json(posts)
 })
 
 // Todos los posts por id
@@ -37,43 +38,51 @@ app.get('/devq/post/:id', (req, res, next) => {
 })
 
 // Borrar un post por id
-app.delete('/devq/post/:id', (req, res, next) => {
+app.delete('/devq/post/:id', async (req, res, next) => {
     const { id } = req.params
 
-    Post.findByIdAndDelete(id)
-        .then(() => {
-            res.status(204).end()
-        }).catch(err =>
-            next(err)
-        )
+    try {
+        Post.findByIdAndDelete(id)
+        res.status(204).end()
+    } catch (err) {
+        next(err)
+    }
 })
 
 // Crear un post
-app.post('/devq/post', (req, res, next) => {
-    const post = req.body
+app.post('/devq/post', async (req, res, next) => {
+    const { company, description, image, country, city, experience, questions, userId } = req.body
 
-    if (!post || !post.company) {
+    const user = await User.findById(userId)
+
+    if (!company || !description || !image || !country || !city || !experience || !questions) {
         return res.status(400).json({
-            error: 'company is missing'
+            error: 'fields are missing'
         })
     }
 
     const newPost = new Post({
-        company: post.company,
-        description: post.description,
-        image: post.image,
-        country: post.country,
-        city: post.city,
-        experience: post.experience,
-        questions: post.questions,
-        create_date: new Date()
+        company,
+        description,
+        image,
+        country,
+        city,
+        experience,
+        questions,
+        create_date: new Date(),
+        user: user._id
     })
 
-    newPost.save()
-        .then(saveedPost => {
-            res.json(saveedPost)
-        })
-        .catch(err => next(err))
+    try {
+        const savedPost = await newPost.save()
+
+        user.posts = user.posts.concat(savedPost._id)
+        await user.save()
+
+        res.json(savedPost)
+    } catch (err) {
+        next(err)
+    }
 })
 
 // Modificar un post
@@ -93,8 +102,11 @@ app.put('/devq/post/:id', (req, res, next) => {
         .catch(err => next(err))
 })
 
+// Muestra todos los usuario
+app.use('devq/users', usersRouter)
+
 // Crear usuarios
-app.use('/devQ/users', usersRouter)
+app.use('/devq/users', usersRouter)
 
 // Middleware para páginas no encontradas
 app.use(notFound)
