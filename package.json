@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
+    "build": "npm i",
     "start": "node index.js",
     "fix-js": "eslint-auto-fix ",
     "test": "echo \"Error: no test specified\" && exit 1"
