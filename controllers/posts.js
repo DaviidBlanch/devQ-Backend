@@ -25,7 +25,7 @@ postsRouter.get('/', (req, res, next) => {
     })
 })
 
-postsRouter.delete('/', async (req, res, next) => {
+postsRouter.delete('/', userExtractor, async (req, res, next) => {
     const { id } = req.params
 
     try {
@@ -75,7 +75,7 @@ postsRouter.post('/', userExtractor, async (req, res, next) => {
     }
 })
 
-postsRouter.put('/', (req, res, next) => {
+postsRouter.put('/', userExtractor, (req, res, next) => {
     const { id } = req.params
     const post = req.body
 
