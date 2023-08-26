@@ -1,6 +1,7 @@
 const postsRouter = require('express').Router()
 const Post = require('../models/Post')
 const User = require('../models/User')
+const userExtractor = require('../middleware/userExtractor')
 
 postsRouter.get('/', async (req, res, next) => {
     const posts = await Post.find({}).populate('user', {
@@ -35,9 +36,13 @@ postsRouter.delete('/', async (req, res, next) => {
     }
 })
 
-postsRouter.post('/', async (req, res, next) => {
-    const { company, description, image, country, city, experience, questions, userId } = req.body
+postsRouter.post('/', userExtractor, async (req, res, next) => {
+    const { company, description, image, country, city, experience, questions } = req.body
 
+    // Sacar userId de request
+    const { userId } = req
+
+    // Sacar user de la base de datos
     const user = await User.findById(userId)
 
     if (!company || !description || !image || !country || !city || !experience || !questions || !user) {

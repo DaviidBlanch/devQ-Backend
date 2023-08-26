@@ -8,6 +8,7 @@ const notFound = require('./middleware/notFound')
 const handleError = require('./middleware/handleError')
 const usersRouter = require('./controllers/users')
 const postsRouter = require('./controllers/posts')
+const loginRouter = require('./controllers/login')
 
 app.use(cors())
 app.use(express.json())
@@ -32,6 +33,9 @@ app.use('/devq/users', usersRouter)
 
 // Crear usuarios
 app.use('/devq/users', usersRouter)
+
+// Login
+app.use('/devq/login', loginRouter)
 
 // Middleware para páginas no encontradas
 app.use(notFound)
