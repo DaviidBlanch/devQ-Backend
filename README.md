@@ -43,7 +43,10 @@ Install bcrypt
 ```
 $ npm install bcrypt
 ```
-
+Install jsonWebToken
+```
+$ npm install jsonwebtoken
+```
 Run in dev mode:
 ```
 $ npm run dev
