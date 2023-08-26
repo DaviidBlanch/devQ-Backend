@@ -39,6 +39,7 @@ app.use('/devq/login', loginRouter)
 
 // Middleware para páginas no encontradas
 app.use(notFound)
+
 // Middlware para errores
 app.use(handleError)
 
