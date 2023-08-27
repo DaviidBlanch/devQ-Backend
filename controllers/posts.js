@@ -4,11 +4,19 @@ const User = require('../models/User')
 const userExtractor = require('../middleware/userExtractor')
 
 postsRouter.get('/', async (req, res, next) => {
-    const posts = await Post.find({}).populate('user', {
-        username: 1,
-        name: 1
-    })
-    res.json(posts)
+    const { search } = req.query
+
+    if (search) {
+        const posts = await Post.find({ company: { $regex: search.toLowerCase(), $options: 'i' } })
+        res.json(posts)
+    } else {
+        const posts = await Post.find({}).populate('user', {
+            username: 1,
+            name: 1
+        })
+        res.json(posts)
+    }
+    res.status(500).end()
 })
 
 postsRouter.get('/', (req, res, next) => {
