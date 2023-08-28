@@ -4,18 +4,29 @@ const User = require('../models/User')
 const userExtractor = require('../middleware/userExtractor')
 
 postsRouter.get('/', async (req, res, next) => {
-    const { search } = req.query
+    const { search, currentPage } = req.query
+    const limitPage = 5
+    const nextPage = (currentPage - 1) * limitPage
+
+    if (currentPage < 1) {
+        return res.status(400).json({ error: 'Page must be greater than 0' })
+    }
+    const totalPosts = await Post.find({}).countDocuments()
 
     if (search) {
         const posts = await Post.find({ company: { $regex: search.toLowerCase(), $options: 'i' } })
-        res.json(posts)
+            .skip(nextPage)
+            .limit(limitPage)
+            .populate('user', { username: 1, name: 1 })
+        res.json({ totalPosts, posts })
     } else {
-        const posts = await Post.find({}).populate('user', {
-            username: 1,
-            name: 1
-        })
-        res.json(posts)
+        const posts = await Post.find({})
+            .skip(nextPage)
+            .limit(limitPage)
+            .populate('user', { username: 1, name: 1 })
+        res.json({ totalPosts, posts })
     }
+
     res.status(500).end()
 })
 

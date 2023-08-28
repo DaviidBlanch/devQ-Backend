@@ -9,6 +9,7 @@ const handleError = require('./middleware/handleError')
 const usersRouter = require('./controllers/users')
 const postsRouter = require('./controllers/posts')
 const loginRouter = require('./controllers/login')
+const Post = require('./models/Post')
 
 app.use(cors())
 app.use(express.json())
@@ -17,7 +18,19 @@ app.use(express.json())
 app.use('/devq/posts', postsRouter)
 
 // Mustra todos los posts por id
-app.use('/devq/posts/:id', postsRouter)
+app.get('/devq/post/:id', (req, res, next) => {
+    const { id } = req.params
+
+    Post.findById(id).then(post => {
+        if (post) {
+            return res.json(post)
+        } else {
+            res.status(404).end()
+        }
+    }).catch(err => {
+        next(err)
+    })
+})
 
 // Borrar un post por id
 app.use('/devq/posts/:id', postsRouter)

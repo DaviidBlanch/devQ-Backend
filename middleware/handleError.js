@@ -7,6 +7,8 @@ const ERROR_HANDLERS = {
 
     TokenExpiredError: res => res.status(401).json({ error: 'token expired' }),
 
+    ParamError: res => res.status(400).send({ error: 'missing parameters' }),
+
     defaultError: res => res.status(500).end()
 }
 
