@@ -5,8 +5,8 @@ const userExtractor = require('../middleware/userExtractor')
 
 postsRouter.get('/', async (req, res, next) => {
     const { search, currentPage } = req.query
-    const limitPage = 5
-    const nextPage = (currentPage - 1) * limitPage
+    const limitPage = 3
+    const pageStartIndex = (currentPage - 1) * limitPage
 
     if (currentPage < 1) {
         return res.status(400).json({ error: 'Page must be greater than 0' })
@@ -15,16 +15,16 @@ postsRouter.get('/', async (req, res, next) => {
 
     if (search) {
         const posts = await Post.find({ company: { $regex: search.toLowerCase(), $options: 'i' } })
-            .skip(nextPage)
+            .skip(pageStartIndex)
             .limit(limitPage)
             .populate('user', { username: 1, name: 1 })
-        res.json({ totalPosts, posts })
+        res.json({ totalPosts, currentPage, posts })
     } else {
         const posts = await Post.find({})
-            .skip(nextPage)
+            .skip(pageStartIndex)
             .limit(limitPage)
             .populate('user', { username: 1, name: 1 })
-        res.json({ totalPosts, posts })
+        res.json({ totalPosts, currentPage, posts })
     }
 
     res.status(500).end()
