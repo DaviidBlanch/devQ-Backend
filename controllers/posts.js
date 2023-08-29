@@ -5,7 +5,7 @@ const userExtractor = require('../middleware/userExtractor')
 
 postsRouter.get('/', async (req, res, next) => {
     const { search, currentPage } = req.query
-    const limitPage = 3
+    const limitPage = 5
     const pageStartIndex = (currentPage - 1) * limitPage
 
     if (currentPage < 1) {
