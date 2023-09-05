@@ -19,13 +19,19 @@ postsRouter.get('/', async (req, res, next) => {
             .skip(pageStartIndex)
             .limit(limitPage)
             .populate('user', { username: 1, name: 1 })
-        res.json({ totalPosts, currentPage, posts })
+
+        const currentPosts = posts.slice(0, Math.min(posts.length, limitPage))
+
+        res.json({ totalPosts, currentPage, posts, currentPosts: currentPosts.length })
     } else {
         const posts = await Post.find({})
             .skip(pageStartIndex)
             .limit(limitPage)
             .populate('user', { username: 1, name: 1 })
-        res.json({ totalPosts, currentPage, posts })
+
+        const currentPosts = posts.slice(0, Math.min(posts.length, limitPage))
+
+        res.json({ totalPosts, currentPage, posts, currentPosts: currentPosts.length })
     }
 
     res.status(500).end()
