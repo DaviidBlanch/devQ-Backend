@@ -14,7 +14,8 @@ postsRouter.get('/', async (req, res, next) => {
     const totalPosts = await Post.find({}).countDocuments()
 
     if (search) {
-        const posts = await Post.find({ company: { $regex: search.toLowerCase(), $options: 'i' } })
+        const regex = new RegExp(`^${search.toLowerCase()}`)
+        const posts = await Post.find({ company: { $regex: regex, $options: 'i' } })
             .skip(pageStartIndex)
             .limit(limitPage)
             .populate('user', { username: 1, name: 1 })
