@@ -7,7 +7,6 @@ postsRouter.get('/', async (req, res, next) => {
     const { search, currentPage } = req.query
     const limitPage = 5
     const pageStartIndex = (currentPage - 1) * limitPage
-    const sortOptions = { createdAt: -1 }
 
     if (currentPage < 1) {
         return res.status(400).json({ error: 'Page must be greater than 0' })
@@ -17,7 +16,6 @@ postsRouter.get('/', async (req, res, next) => {
     if (search) {
         const regex = new RegExp(`^${search.toLowerCase()}`)
         const posts = await Post.find({ company: { $regex: regex, $options: 'i' } })
-            .sort(sortOptions)
             .skip(pageStartIndex)
             .limit(limitPage)
             .populate('user', { username: 1, name: 1 })
@@ -25,7 +23,6 @@ postsRouter.get('/', async (req, res, next) => {
         res.json({ totalPosts, currentPage, posts, currentPosts: posts.length })
     } else {
         const posts = await Post.find({})
-            .sort(sortOptions)
             .skip(pageStartIndex)
             .limit(limitPage)
             .populate('user', { username: 1, name: 1 })
