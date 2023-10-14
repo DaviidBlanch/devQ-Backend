@@ -32,8 +32,9 @@ loginRouter.post('/', async (request, response) => {
     )
 
     const transformedPosts = user.posts.map(post => ({
-        image: post.image,
-        company: post.company
+        id: post._id,
+        company: post.company,
+        image: post.image
     }))
 
     response.send({
