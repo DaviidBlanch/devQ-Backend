@@ -7,7 +7,7 @@ loginRouter.post('/', async (request, response) => {
     const { body } = request
     const { username, password } = body
 
-    const user = await User.findOne({ username })
+    const user = await User.findOne({ username }).populate('posts')
     const passwordCorrect = user === null
         ? false
         : await bcrypt.compare(password, user.passwordHash)
@@ -31,10 +31,16 @@ loginRouter.post('/', async (request, response) => {
         }
     )
 
+    const transformedPosts = user.posts.map(post => ({
+        image: post.image,
+        company: post.company
+    }))
+
     response.send({
         name: user.name,
         username: user.username,
         image: user.image,
+        posts: transformedPosts,
         token
     })
 })
