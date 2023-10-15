@@ -20,6 +20,10 @@ postSchema.set('toJSON', {
         returnedObject.id = returnedObject._id
         delete returnedObject._id
         delete returnedObject.__v
+
+        if (returnedObject.create_date) {
+            returnedObject.create_date = returnedObject.create_date.toLocaleDateString('es-ES')
+        }
     }
 })
 
